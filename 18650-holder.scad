@@ -1,8 +1,9 @@
 include <BOSL/constants.scad>
 use <BOSL/masks.scad>
 use <BOSL/transforms.scad>
+use <MCAD/nuts_and_bolts.scad>
 
-// count
+// count of cells
 numBatteries = 7;
 
 // BatteryDimensions
@@ -26,6 +27,8 @@ contactThick  = 0.35;
 springWidth = 5;
 springSlot = 1;
 
+// TODO: Stabilize springSlot, contactThick; center springWidth
+
 $fn=120;
 
 module _contact() {
@@ -36,12 +39,10 @@ module _contact() {
 }
 
 module contacts() {
-  // translate([boxWidth/2-springWidth/2, wallThick, 0]) {
   translate([(batteryDiameter)/2, wallThick, 0]) {
     rotate([90, 0, 0]) _contact();
   }    
 
-  // translate([(boxWidth)/2+springWidth/2, 0, 0]) {
   translate([(batteryDiameter)/2+springWidth, boxLength-wallThick, 0]) {
     rotate([90, 0, 180]) _contact();     
   }
@@ -85,13 +86,37 @@ module BatteryHolder() {
         }              
       }
     }
-  }
+
+    // screwHoles
+    translate([(batteryDiameter+wallThick)/2, 15, boxHeight/2-wallThick]) {
+      rotate([0, 180, 0]) {
+        boltHole(size=3, length=20);   
+      }
+    }
+    translate([(batteryDiameter+wallThick)/2, boxLength-15, boxHeight/2-wallThick]) {
+      rotate([0, 180, 0]) {
+        boltHole(size=3, length=20);   
+      }
+    }
+    translate([(batteryDiameter-wallThick)/2+boxWidth-batteryDiameter, 15, boxHeight/2-wallThick]) {
+      rotate([0, 180, 0]) {
+        boltHole(size=3, length=20);   
+      }
+    }
+    translate([(batteryDiameter-wallThick)/2+boxWidth-batteryDiameter, boxLength-15, boxHeight/2-wallThick]) {
+      rotate([0, 180, 0]) {
+        boltHole(size=3, length=20);   
+      }
+    }
+  } //difference basePlate
+
   difference() {
-  outerWalls();
-    translate([-batterySpacer,0,batteryDiameter/2.5])
-    for (i=[0:numBatteries-1]) {
-      translate([i*(batteryDiameter+batterySpacer*2), 0, 0]) {
-        contacts();
+    outerWalls();
+    translate([-batterySpacer, 0, batteryDiameter/2.5]) {
+      for (i=[0:numBatteries-1]) {
+        translate([i*(batteryDiameter+batterySpacer*2), 0, 0]) {
+          contacts();
+        }
       }
     }
   }
