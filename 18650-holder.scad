@@ -3,7 +3,7 @@ use <BOSL/masks.scad>
 use <BOSL/transforms.scad>
 
 // count
-numBatteries = 1;
+numBatteries = 7;
 
 // BatteryDimensions
 // https://en.wikipedia.org/wiki/List_of_battery_sizes#Cylindrical_lithium-ion_rechargeable_battery
@@ -28,12 +28,25 @@ springSlot = 1;
 
 $fn=120;
 
-module contact() {
+module _contact() {
   cube([springWidth+EPS, contactHeight, springSlot]);
   translate([-springWidth/2,0,contactThick*2]) {
       cube([contactWidth, contactHeight, springSlot]);
   }
 }
+
+module contacts() {
+  // translate([boxWidth/2-springWidth/2, wallThick, 0]) {
+  translate([(batteryDiameter)/2, wallThick, 0]) {
+    rotate([90, 0, 0]) _contact();
+  }    
+
+  // translate([(boxWidth)/2+springWidth/2, 0, 0]) {
+  translate([(batteryDiameter)/2+springWidth, boxLength-wallThick, 0]) {
+    rotate([90, 0, 180]) _contact();     
+  }
+}
+
 
 module outerWalls() {
   // outer walls
@@ -46,9 +59,6 @@ module outerWalls() {
       right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
 
     }
-    translate([boxWidth/2-springWidth/2, wallThick, 0]) {
-      rotate([90, 0, 0]) contact();
-    }    
   }
 
   translate([0, boxLength-wallThick, 0]) {
@@ -57,10 +67,6 @@ module outerWalls() {
       up(batteryDiameter) rotate([90, 0, 0]) {
         fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
         right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
-
-      }
-      translate([(boxWidth)/2+springWidth/2, 0, 0]) {
-        rotate([90, 0, 180]) contact();     
       }
     }
   }
@@ -80,9 +86,13 @@ module BatteryHolder() {
       }
     }
   }
-  for (i=[0:numBatteries-1]) {
-    translate([0, 0, 0]) {
-      outerWalls();
+  difference() {
+  outerWalls();
+    translate([-batterySpacer,0,batteryDiameter/2.5])
+    for (i=[0:numBatteries-1]) {
+      translate([i*(batteryDiameter+batterySpacer*2), 0, 0]) {
+        contacts();
+      }
     }
   }
 }
