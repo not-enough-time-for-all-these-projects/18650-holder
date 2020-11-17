@@ -39,18 +39,16 @@ module outerWalls() {
   // outer walls
   thick=wallThick;
 
-  translate([0, 0, 0]) {
-    difference() {
-      cube([boxWidth, thick, batteryDiameter]);
-      up(batteryDiameter) rotate([90, 0, 0]) {
-        fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
-        right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
+  difference() {
+    cube([boxWidth, thick, batteryDiameter]);
+    up(batteryDiameter) rotate([90, 0, 0]) {
+      fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
+      right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
 
-      }
-      translate([boxWidth/2-springWidth/2, wallThick, 0]) {
-        rotate([90, 0, 0]) contact();
-      }    
     }
+    translate([boxWidth/2-springWidth/2, wallThick, 0]) {
+      rotate([90, 0, 0]) contact();
+    }    
   }
 
   translate([0, boxLength-wallThick, 0]) {
