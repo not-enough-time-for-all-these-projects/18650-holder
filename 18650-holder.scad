@@ -29,64 +29,64 @@ springSlot = 1;
 $fn=120;
 
 module contact() {
-    cube([springWidth+EPS, contactHeight, springSlot]);
-    translate([-springWidth/2,0,contactThick*2]) {
-        cube([contactWidth, contactHeight, springSlot]);
-    }
+  cube([springWidth+EPS, contactHeight, springSlot]);
+  translate([-springWidth/2,0,contactThick*2]) {
+      cube([contactWidth, contactHeight, springSlot]);
+  }
 }
 
 module outerWalls() {
-    // outer walls
-    thick=wallThick;
+  // outer walls
+  thick=wallThick;
 
-    translate([0, 0, 0]) {
-        difference() {
-            cube([boxWidth, thick, batteryDiameter]);
-            up(batteryDiameter) rotate([90, 0, 0]) {
-                fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
-                right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
+  translate([0, 0, 0]) {
+    difference() {
+      cube([boxWidth, thick, batteryDiameter]);
+      up(batteryDiameter) rotate([90, 0, 0]) {
+        fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
+        right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
 
-            }
-            translate([boxWidth/2-springWidth/2, wallThick, 0]) {
-                rotate([90, 0, 0]) contact();
-            }    
-        }
+      }
+      translate([boxWidth/2-springWidth/2, wallThick, 0]) {
+        rotate([90, 0, 0]) contact();
+      }    
     }
+  }
 
-    translate([0, boxLength-wallThick, 0]) {
-        difference() {
-            cube([boxWidth, thick, batteryDiameter]);
-            up(batteryDiameter) rotate([90, 0, 0]) {
-                fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
-                right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
+  translate([0, boxLength-wallThick, 0]) {
+    difference() {
+      cube([boxWidth, thick, batteryDiameter]);
+      up(batteryDiameter) rotate([90, 0, 0]) {
+        fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
+        right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
 
-            }
-            translate([(boxWidth)/2+springWidth/2, 0, 0]) {
-                rotate([90, 0, 180]) contact();     
-            }
-        }
+      }
+      translate([(boxWidth)/2+springWidth/2, 0, 0]) {
+        rotate([90, 0, 180]) contact();     
+      }
     }
+  }
 }
     
 module BatteryHolder() {
-    difference() {
-        // baseplate
-        cube([boxWidth, boxLength, boxHeight]); 
+  difference() {
+    // baseplate
+    cube([boxWidth, boxLength, boxHeight]); 
 
-        // battery cutout
-        for (i=[0:numBatteries-1]) {
-            translate([i * (batteryDiameter+2*batterySpacer) + batteryDiameter/2+batterySpacer*2, boxLength ,batteryDiameter/2+wallThick]) {
-                rotate([90, 0, 0]) {
-                    cylinder(h=boxLength,d=batteryDiameter);     
-                }              
-            }
-        }
-    }
+    // battery cutout
     for (i=[0:numBatteries-1]) {
-    //    translate([i * (batteryDiameter+2*batterySpacer) + batteryDiameter/2+batterySpacer*2, boxLength ,batteryDiameter/2+wallThick]) {
-        outerWalls();
-    //    }
+      translate([i * (batteryDiameter+2*batterySpacer) + batteryDiameter/2+batterySpacer*2, boxLength ,batteryDiameter/2+wallThick]) {
+        rotate([90, 0, 0]) {
+          cylinder(h=boxLength,d=batteryDiameter);     
+        }              
+      }
     }
+  }
+  for (i=[0:numBatteries-1]) {
+    translate([0, 0, 0]) {
+      outerWalls();
+    }
+  }
 }
 
 BatteryHolder();
