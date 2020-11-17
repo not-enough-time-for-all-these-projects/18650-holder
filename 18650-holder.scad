@@ -22,19 +22,17 @@ boxHeight = batteryDiameter / 2.0;
 
 contactWidth = 10;
 contactHeight = 20;
-contactThick  = 0.4; //0.3;
+contactThick  = 0.35; 
 springWidth = 5;
 springSlot = 1;
 
 $fn=120;
 
 module contact() {
-//    up(batteryDiameter/2-contactWidth/2)
-   rotate([90, 0, 0]) {
-//        cube([contactWidth, contactHeight, contactThick]);
-  //      right(contactWidth/2-springWidth/2) down(contactThick*2)
-          cube([springWidth+EPS, contactHeight, springSlot]);
-   }
+    cube([springWidth+EPS, contactHeight, springSlot]);
+    translate([-springWidth/2,0,contactThick*2]) {
+        cube([contactWidth, contactHeight, springSlot]);
+    }
 }
 
 module outerWalls() {
@@ -49,7 +47,9 @@ module outerWalls() {
                 right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
 
             }
-           back(wallThick)right((boxWidth-springWidth)/2) contact();    
+            translate([boxWidth/2-springWidth/2, wallThick, 0]) {
+                rotate([90, 0, 0]) contact();
+            }    
         }
     }
 
@@ -61,16 +61,14 @@ module outerWalls() {
                 right(boxWidth) fillet_mask_z(l=thick, r=batteryDiameter/2, align=V_DOWN);
 
             }
-            back(springSlot)right((boxWidth-springWidth)/2) contact();    
-            
-
+            translate([(boxWidth)/2+springWidth/2, 0, 0]) {
+                rotate([90, 0, 180]) contact();     
+            }
         }
     }
 }
     
 module BatteryHolder() {
-
-
     difference() {
         // baseplate
         cube([boxWidth, boxLength, boxHeight]); 
