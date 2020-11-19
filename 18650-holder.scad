@@ -29,6 +29,8 @@ contactSlot          =  .6;
 contactContactWidth  =  3.2;
 contactContactLength =  7;
 
+bracketCubeSize=8;
+
 $fn=120;
 
 module _contactslot() {
@@ -63,6 +65,43 @@ module contactslots() {
         rotate([90, 0, 180]) _contactslot();     
       }
     }
+}
+
+module _boltBracket() {
+  screwElevation=1.2;
+  difference() {
+    cube(size=[bracketCubeSize, bracketCubeSize, bracketCubeSize/2]);
+    up(bracketCubeSize) {
+      fillet_mask_z(l=bracketCubeSize, r=bracketCubeSize/2, align=V_DOWN);
+      back(bracketCubeSize) fillet_mask_z(l=bracketCubeSize, r=bracketCubeSize/2, align=V_DOWN);
+    }
+    translate([bracketCubeSize/2, bracketCubeSize/2, screwElevation]) {
+      rotate([0, 180, 0]) {
+      boltHole(size=3, length=5);   
+    }
+  }
+
+  }
+}
+
+module boltBrackets() {
+  // screwHoles
+  translate([-bracketCubeSize,0,0]) {
+    _boltBracket();
+  }
+  translate([-bracketCubeSize,boxLength-bracketCubeSize,0]) {
+    _boltBracket();
+  }
+  translate([boxWidth, boxLength, 0]) {
+    rotate([180,180,0]) {
+      translate([-bracketCubeSize,0,0]) {
+        _boltBracket();
+      }
+      translate([-bracketCubeSize,boxLength-bracketCubeSize,0]) {
+        _boltBracket();
+      }
+    }
+  }
 }
 
 module outerWalls() {
@@ -102,31 +141,9 @@ module BatteryHolder() {
         }              
       }
     }
-
-    // screwHoles
-    translate([(batteryDiameter+wallThick)/2, 15, boxHeight/2-wallThick]) {
-      rotate([0, 180, 0]) {
-        boltHole(size=3, length=20);   
-      }
-    }
-    translate([(batteryDiameter+wallThick)/2, boxLength-15, boxHeight/2-wallThick]) {
-      rotate([0, 180, 0]) {
-        boltHole(size=3, length=20);   
-      }
-    }
-    translate([(batteryDiameter-wallThick)/2+boxWidth-batteryDiameter, 15, boxHeight/2-wallThick]) {
-      rotate([0, 180, 0]) {
-        boltHole(size=3, length=20);   
-      }
-    }
-    translate([(batteryDiameter-wallThick)/2+boxWidth-batteryDiameter, boxLength-15, boxHeight/2-wallThick]) {
-      rotate([0, 180, 0]) {
-        boltHole(size=3, length=20);   
-      }
-    }
   } //difference basePlate
-
-    outerWalls();
+  outerWalls();
+  boltBrackets();
 }
 
 difference() {
