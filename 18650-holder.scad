@@ -4,11 +4,11 @@ use <BOSL/transforms.scad>
 use <MCAD/nuts_and_bolts.scad>
 
 // count of cells
-numBatteries = 7;
+numBatteries = 10;
 
 // BatteryDimensions
 // https://en.wikipedia.org/wiki/List_of_battery_sizes#Cylindrical_lithium-ion_rechargeable_battery
-//18650
+// 18650
 batteryDiameter = 18;
 batteryLength = 65+1;
 
@@ -39,12 +39,12 @@ module _contact() {
 }
 
 module contacts() {
-  translate([(batteryDiameter)/2, wallThick, 0]) {
-    rotate([90, 0, 0]) _contact();
+  translate([(batteryDiameter)/2-batterySpacer*2, wallThick, 0]) {
+    rotate([90, 0, 0]) #_contact();
   }    
 
-  translate([(batteryDiameter)/2+springWidth, boxLength-wallThick, 0]) {
-    rotate([90, 0, 180]) _contact();     
+  translate([(batteryDiameter)/2+wallThick, boxLength-wallThick, 0]) {
+    rotate([90, 0, 180]) #_contact();     
   }
 }
 
@@ -114,7 +114,7 @@ module BatteryHolder() {
     outerWalls();
     translate([-batterySpacer, 0, batteryDiameter/2.5]) {
       for (i=[0:numBatteries-1]) {
-        translate([i*(batteryDiameter+batterySpacer*2), 0, 0]) {
+        translate([i*(batteryDiameter+batterySpacer*2)+wallThick/2, 0, 0]) {
           contacts();
         }
       }
