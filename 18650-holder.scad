@@ -21,12 +21,12 @@ boxWidth = (batteryDiameter + 2* batterySpacer) * numBatteries + batterySpacer *
 boxLength = batteryLength+ 2*(wallThick);
 boxHeight = batteryDiameter / 2.0;
 
-contactWidth         = 10;
-contactHeight        =  9;
-contactThick         =  1; // 1.2 in real; 
-contactSpringWidth   =  6;
+contactWidth         = 10.2;
+contactHeight        =  9.2;
+contactThick         =  1.2;
+contactSpringWidth   =  6.4;
 contactSlot          =  .6;
-contactContactWidth  =  2.6;
+contactContactWidth  =  3.2;
 contactContactLenght =  7;
 
 $fn=120;
@@ -67,7 +67,7 @@ module contactslots() {
 
 module outerWalls() {
   // outer walls
-  thick=wallThick;
+  thick=wallThick; 
 
   difference() {
     cube([boxWidth, thick, batteryDiameter]);
