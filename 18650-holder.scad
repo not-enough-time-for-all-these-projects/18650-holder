@@ -27,7 +27,7 @@ contactThick         =  1.2;
 contactSpringWidth   =  6.4;
 contactSlot          =  .6;
 contactContactWidth  =  3.2;
-contactContactLenght =  7;
+contactContactLength =  7;
 
 $fn=120;
 
@@ -42,8 +42,8 @@ module _contactslot() {
       cube([contactSpringWidth, contactHeight+boxHeight, contactSlot]);
     }
     // Contact for the plug
-    translate([(contactWidth-contactContactWidth)/2,-contactContactLenght,0]) {
-      cube(size=[contactContactWidth, contactContactLenght, contactThick]);
+    translate([(contactWidth-contactContactWidth)/2,-contactContactLength,0]) {
+      cube(size=[contactContactWidth, contactContactLength, contactThick]);
     }
   }
   // cube([springWidth+EPS, contactHeight, springSlot]);
