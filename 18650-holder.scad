@@ -4,13 +4,13 @@ use <BOSL/transforms.scad>
 use <MCAD/nuts_and_bolts.scad>
 
 // count of cells
-numBatteries = 1;
+numBatteries = 7;
 
 // BatteryDimensions
 // https://en.wikipedia.org/wiki/List_of_battery_sizes#Cylindrical_lithium-ion_rechargeable_battery
 // 18650
 batteryDiameter = 18;
-batteryLength = 65+1;
+batteryLength = 65+2;
 
 // variables
 wallThick = 3.5;
@@ -38,7 +38,7 @@ module _contactslot() {
     // plate
     cube([contactWidth, contactHeight, contactThick]);
     // slot 
-    cube([contactWidth, contactHeight+boxHeight, contactThick]);
+    cube([contactWidth, contactHeight+boxHeight, contactThick+EPS]);
     // spring
     translate([(contactWidth-contactSpringWidth)/2, 0, -contactSlot]) {
       cube([contactSpringWidth, contactHeight+boxHeight, contactSlot]);
@@ -48,23 +48,15 @@ module _contactslot() {
       cube(size=[contactContactWidth, contactContactLength, contactThick]);
     }
   }
-  // cube([springWidth+EPS, contactHeight, springSlot]);
-  // translate([-springWidth/2,0,contactThick*2]) {
-  //     cube([contactWidth, contactHeight, springSlot]);
-  // }
 }
 
 module contactslots() {
-    translate([-wallThick-contactThick/2, /*wallThick*/0, 0]) {
-      translate([batteryDiameter/2-wallThick, wallThick, boxHeight/2]) {
-        rotate([90, 0, 0]) _contactslot();
-      }
-    }
-    translate([wallThick*2-contactThick, (boxLength-wallThick), 0]) {
-      translate([batteryDiameter/2-wallThick, 0, boxHeight/2]) {
-        rotate([90, 0, 180]) _contactslot();     
-      }
-    }
+  translate([batteryDiameter/2-wallThick*2-contactThick/2+.3, wallThick, boxHeight/2]) {
+    rotate([90, 0, 0]) _contactslot();
+  }
+  translate([batteryDiameter/2+wallThick-contactThick/2, (boxLength-wallThick), boxHeight/2]) {
+    rotate([90, 0, 180]) _contactslot();     
+  }
 }
 
 module _boltBracket() {
@@ -135,7 +127,7 @@ module BatteryHolder() {
 
     // battery cutout
     for (i=[0:numBatteries-1]) {
-      translate([i * (batteryDiameter+2*batterySpacer) + batteryDiameter/2+batterySpacer*2, boxLength ,batteryDiameter/2+wallThick /* should be boxHeight */]) {
+      translate([i * (batteryDiameter+2*batterySpacer) + batteryDiameter/2+batterySpacer*2, boxLength, /*batteryDiameter/2+wallThick */boxHeight-.07]) {
         rotate([90, 0, 0]) {
           cylinder(h=boxLength,d=batteryDiameter);     
         }              
