@@ -4,7 +4,7 @@ use <BOSL/transforms.scad>
 use <MCAD/nuts_and_bolts.scad>
 
 // count of cells
-numBatteries = 10;
+numBatteries = 1;
 
 // BatteryDimensions
 // https://en.wikipedia.org/wiki/List_of_battery_sizes#Cylindrical_lithium-ion_rechargeable_battery
@@ -21,33 +21,49 @@ boxWidth = (batteryDiameter + 2* batterySpacer) * numBatteries + batterySpacer *
 boxLength = batteryLength+ 2*(wallThick);
 boxHeight = batteryDiameter / 2.0;
 
-contactWidth = 10;
-contactHeight = 20;
-contactThick  = 0.35; 
-springWidth = 5;
-springSlot = 1;
-
-// TODO: Stabilize springSlot, contactThick; center springWidth
+contactWidth         = 10;
+contactHeight        =  9;
+contactThick         =  1; // 1.2 in real; 
+contactSpringWidth   =  6;
+contactSlot          =  .6;
+contactContactWidth  =  2.6;
+contactContactLenght =  7;
 
 $fn=120;
 
-module _contact() {
-  cube([springWidth+EPS, contactHeight, springSlot]);
-  translate([-springWidth/2,0,contactThick*2]) {
-      cube([contactWidth, contactHeight, springSlot]);
+module _contactslot() {
+  translate([0, 0, contactSlot]) {
+    // plate
+    cube([contactWidth, contactHeight, contactThick]);
+    // slot 
+    cube([contactWidth, contactHeight+boxHeight, contactThick]);
+    // spring
+    translate([(contactWidth-contactSpringWidth)/2, 0, -contactSlot]) {
+      cube([contactSpringWidth, contactHeight+boxHeight, contactSlot]);
+    }
+    // Contact for the plug
+    translate([(contactWidth-contactContactWidth)/2,-contactContactLenght,0]) {
+      cube(size=[contactContactWidth, contactContactLenght, contactThick]);
+    }
   }
+  // cube([springWidth+EPS, contactHeight, springSlot]);
+  // translate([-springWidth/2,0,contactThick*2]) {
+  //     cube([contactWidth, contactHeight, springSlot]);
+  // }
 }
 
-module contacts() {
-  translate([(batteryDiameter)/2-batterySpacer*2, wallThick, 0]) {
-    rotate([90, 0, 0]) #_contact();
-  }    
-
-  translate([(batteryDiameter)/2+wallThick, boxLength-wallThick, 0]) {
-    rotate([90, 0, 180]) #_contact();     
-  }
+module contactslots() {
+    translate([-wallThick-contactThick/2, /*wallThick*/0, 0]) {
+      translate([batteryDiameter/2-wallThick, wallThick, boxHeight/2]) {
+        rotate([90, 0, 0]) _contactslot();
+      }
+    }
+    translate([wallThick*2-contactThick, (boxLength-wallThick), 0]) {
+      translate([batteryDiameter/2-wallThick, 0, boxHeight/2]) {
+        rotate([90, 0, 180]) _contactslot();     
+      }
+    }
 }
-
 
 module outerWalls() {
   // outer walls
@@ -80,7 +96,7 @@ module BatteryHolder() {
 
     // battery cutout
     for (i=[0:numBatteries-1]) {
-      translate([i * (batteryDiameter+2*batterySpacer) + batteryDiameter/2+batterySpacer*2, boxLength ,batteryDiameter/2+wallThick]) {
+      translate([i * (batteryDiameter+2*batterySpacer) + batteryDiameter/2+batterySpacer*2, boxLength ,batteryDiameter/2+wallThick /* should be boxHeight */]) {
         rotate([90, 0, 0]) {
           cylinder(h=boxLength,d=batteryDiameter);     
         }              
@@ -110,16 +126,15 @@ module BatteryHolder() {
     }
   } //difference basePlate
 
-  difference() {
     outerWalls();
-    translate([-batterySpacer, 0, batteryDiameter/2.5]) {
-      for (i=[0:numBatteries-1]) {
-        translate([i*(batteryDiameter+batterySpacer*2)+wallThick/2, 0, 0]) {
-          contacts();
-        }
-      }
+}
+
+difference() {
+  BatteryHolder();
+  // cut out contact slots
+  for (i=[0:numBatteries-1]) {
+    translate([i*(batteryDiameter+batterySpacer*2)+(batteryDiameter-contactWidth)/2, 0, 0]) {
+      contactslots();
     }
   }
 }
-
-BatteryHolder();
