@@ -8,4 +8,3 @@ OpenSCAD model for an parametric 18650 battery holder with slots for spring cont
 ## dependencies
 
 - [BOSL Libray](https://github.com/revarbat/BOSL)
-- [MCAD Library](https://github.com/openscad/MCAD)
