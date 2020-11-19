@@ -1,7 +1,7 @@
 include <BOSL/constants.scad>
 use <BOSL/masks.scad>
 use <BOSL/transforms.scad>
-use <MCAD/nuts_and_bolts.scad>
+use <BOSL/metric_screws.scad>
 
 // count of cells
 numBatteries = 7;
@@ -60,7 +60,7 @@ module contactslots() {
 }
 
 module _boltBracket() {
-  screwElevation=1.2;
+  screwElevation=bracketCubeSize/2-get_metric_bolt_head_height(3);
   difference() {
     cube(size=[bracketCubeSize, bracketCubeSize, bracketCubeSize/2]);
     up(bracketCubeSize) {
@@ -68,8 +68,10 @@ module _boltBracket() {
       back(bracketCubeSize) fillet_mask_z(l=bracketCubeSize, r=bracketCubeSize/2, align=V_DOWN);
     }
     translate([bracketCubeSize/2, bracketCubeSize/2, screwElevation]) {
-      rotate([0, 180, 0]) {
-      boltHole(size=3, length=5);   
+      rotate([0, 0, 0]) {
+      // boltHole(size=3, length=5);   
+      // metric_bolt(size=3, l=3, pitch=0);
+      screw(screwsize=3.2, screwlen=15, headsize=get_metric_bolt_head_size(3), headlen=get_metric_bolt_head_height(3));
     }
   }
 
